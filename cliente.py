@@ -13,10 +13,14 @@ black = 0, 0, 0
 
 screen = pygame.display.set_mode(size)
 
-ball = pygame.image.load(r"C:\Users\victo\Documents\java\juego\intro_ball.gif")
+ball = pygame.image.load(r".\intro_ball.gif")
 ballrect = ball.get_rect()
-server_address = ('localhost', 10000)
-sock.connect(server_address)
+server_address = ('localhost', 100)
+try:
+    sock.connect(server_address)
+except Exception:
+    pass
+
 
 while 1:
     # Connect the socket to the port where the server is listening
@@ -26,15 +30,30 @@ while 1:
         sock.sendall(b"")
         data = sock.recv(16)
         print('received {!r}'.format(data))
-        speed=list(map(int,data.decode().split(",")))
-        print(speed)
-    finally:
+        position=list(map(int,data.decode().split("|")))
+        print(position)
+        ballrect.left=position[0]
+        ballrect.top=position[2]
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: sys.exit()
+            if event.type == pygame.QUIT:
+                pygame.display.quit(), sys.exit()
         time.sleep(0.03)
-        ballrect = ballrect.move(speed)
+        #ball.scroll(position[0],position[2])
         screen.fill(black)
-        screen.blit(ball, ballrect)
+        screen.blit(ball,ballrect)
+    except ValueError:
+        print("error")
+    except KeyboardInterrupt:
+        pygame.exit()
+    except IndexError:
+        print("Error de indice de los datos enviados")
+    except ConnectionRefusedError:
+        print("No se conecta")
+        sock.connect(server_address)
+    except Exception:
+        print(Exception)
+        
+    finally:
         pygame.display.flip()
 
 print('closing socket')

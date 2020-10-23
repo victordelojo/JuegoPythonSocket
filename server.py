@@ -1,10 +1,10 @@
-import socket, sys, pygame, time
+import socket, sys, pygame, time, os
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
-server_address = ('localhost', 10000)
+server_address = ('localhost', 100)
 print('starting up on {} port {}'.format(*server_address))
 sock.bind(server_address)
 
@@ -19,8 +19,8 @@ speed = [1, 1]
 black = 0, 0, 0
 
 screen = pygame.display.set_mode(size)
-
-ball = pygame.image.load(r"C:\Users\victo\Documents\java\juego\intro_ball.gif")
+print(os.path.join(""))
+ball = pygame.image.load( os.path.join("intro_ball.gif"))
 ballrect = ball.get_rect()
 
 print('waiting for a connection')
@@ -41,8 +41,10 @@ while 1:
     pygame.display.flip()
     
     try:
-        print(','.join([str(elem) for elem in speed]))
-        connection.sendall((str(ballrect.left)+','+str(ballrect.left)).encode())
+        print((str(ballrect.left)+'|'+str(ballrect.left)+"|"+str(ballrect.top)+"|"+str(ballrect.bottom)).encode())
+        connection.sendall((str(ballrect.left)+'|'+str(ballrect.left)+"|"+str(ballrect.top)+"|"+str(ballrect.bottom)).encode())
     except:
+        
+
         connection.close()
         connection, client_address = sock.accept()
